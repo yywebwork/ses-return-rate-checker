@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#243447">
+<title>SES還元率・職場環境チェック</title>
+<style>
+:root{--ink:#243447;--muted:#657386;--line:#dce3eb;--bg:#f4f7fa;--blue:#315f91;--blue2:#eaf2fb;--good:#24734b;--warn:#9a6411;--bad:#a33c3c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.65}
+header{background:#243447;color:#fff;padding:30px 18px 26px}
+.head{max-width:900px;margin:auto}
+header h1{font-size:clamp(1.45rem,4vw,2rem);line-height:1.35;margin:0 0 8px}
+header p{margin:0;color:#d7e0ea;font-size:.94rem}
+main{max-width:900px;margin:24px auto;padding:0 16px 48px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;margin:0 0 18px;box-shadow:0 3px 12px #24344708}
+h2{font-size:1.2rem;margin:0 0 5px}
+.lead{color:var(--muted);font-size:.9rem;margin:0 0 18px}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.field label{display:block;font-weight:650;font-size:.92rem;margin-bottom:6px}
+input,select{width:100%;min-height:46px;border:1px solid #bdc9d6;border-radius:8px;padding:10px 12px;font:inherit;background:#fff;color:var(--ink)}
+input:focus,select:focus{outline:3px solid #315f9128;border-color:var(--blue)}
+.hint{font-size:.8rem;color:var(--muted);margin-top:4px}
+.questions{display:grid;gap:14px}
+.question{padding:13px 14px;border:1px solid var(--line);border-radius:10px}
+.qtext{font-weight:600;margin-bottom:9px}
+.choices{display:flex;gap:9px;flex-wrap:wrap}
+.choices label{display:flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid var(--line);border-radius:20px;font-size:.88rem;cursor:pointer}
+.choices input{width:auto;min-height:auto;accent-color:var(--blue)}
+button{font:inherit;cursor:pointer;border:0;border-radius:9px;padding:12px 18px;font-weight:700}
+.primary{background:var(--blue);color:#fff;width:100%;margin-top:18px}
+.secondary{background:var(--blue2);color:var(--blue)}
+button:focus-visible{outline:3px solid #315f9166;outline-offset:2px}
+.results{display:none}
+.results.show{display:block}
+.result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.metric{background:#f7f9fc;border:1px solid var(--line);border-radius:11px;padding:15px}
+.metric .label{font-size:.83rem;color:var(--muted)}
+.metric .value{font-size:1.55rem;font-weight:800;line-height:1.3;margin-top:4px;overflow-wrap:anywhere}
+.metric .sub{font-size:.82rem;color:var(--muted);margin-top:5px}
+.result-section{margin-top:20px}
+.result-section h3{font-size:1rem;margin:0 0 9px}
+.axis-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.axis{border:1px solid var(--line);border-radius:10px;padding:13px}
+.axis strong{display:block}
+.axis .score{font-size:1.3rem;font-weight:800;margin:5px 0}
+.status{display:inline-block;border-radius:20px;padding:2px 9px;font-size:.78rem;font-weight:700}
+.good{background:#e8f5ed;color:var(--good)}.warn{background:#fff4df;color:var(--warn)}.bad{background:#faeaea;color:var(--bad)}
+.note{background:#fff8e9;border-left:4px solid #d69a35;padding:12px 14px;border-radius:5px;font-size:.87rem;margin-top:14px}
+ul{padding-left:1.25rem;margin:8px 0}
+li{margin:5px 0}
+.small{font-size:.82rem;color:var(--muted)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.actions button{flex:1;min-width:180px}
+footer{text-align:center;color:var(--muted);font-size:.8rem;padding:4px 16px 28px}
+@media(max-width:620px){main{margin-top:14px;padding:0 12px 32px}.card{padding:17px}.fields,.result-grid{grid-template-columns:1fr}.axis-grid{grid-template-columns:1fr}.metric .value{font-size:1.4rem}.choices{gap:6px}.choices label{padding:6px 9px}}
+</style>
+</head>
+<body>
+<header><div class="head">
+<h1>SES還元率・職場環境チェック</h1>
+<p>給与と契約単価、職場環境を整理して、今の働き方を見直すための無料ツールです。</p>
+</div></header>
+<main>
+<section class="card">
+<h2>1. 給与・契約情報</h2>
+<p class="lead">金額は税引前の額面で入力してください。分からない項目は空欄で構いません。</p>
+<div class="fields">
+<div class="field"><label for="monthly">月給（額面・円）</label><input id="monthly" type="number" min="0" step="1000" placeholder="例：300000"></div>
+<div class="field"><label for="bonus">賞与の年間合計（円・任意）</label><input id="bonus" type="number" min="0" step="1000" placeholder="例：600000"></div>
+<div class="field"><label for="rate">契約単価（月額・円／任意）</label><input id="rate" type="number" min="0" step="10000" placeholder="分かる場合のみ入力"></div>
+<div class="field"><label for="experience">経験年数</label><select id="experience">
+<option value="">選択してください</option><option value="0">未経験〜1年</option><option value="1">1〜3年</option><option value="2">3〜5年</option><option value="3">5年以上</option>
+</select></div>
+<div class="field"><label for="job">職種</label><select id="job">
+<option value="">選択してください</option><option>開発</option><option>インフラ</option><option>運用・保守</option><option>テスト・QA</option><option>その他</option>
+</select></div>
+</div>
+<p class="hint">※月給は必須です。契約単価が不明な場合は、経験年数別の参考レンジで推定します。</p>
+</section>
+
+<section class="card">
+<h2>2. 職場環境チェック</h2>
+<p class="lead">現在の会社・現場について、最も近い回答を選んでください。「分からない」も選択できます。</p>
+<div id="questions" class="questions"></div>
+<button class="primary" id="calculate">結果をチェックする</button>
+<p id="error" role="alert" class="small" style="color:#a33c3c"></p>
+</section>
+
+<section class="card results" id="results" aria-live="polite">
+<h2>チェック結果</h2>
+<p class="lead">入力内容をもとにした目安です。会社や現場の良し悪しを断定するものではありません。</p>
+<div id="moneyResults"></div>
+<div class="result-section"><h3>職場環境の3軸評価</h3><div id="axisResults" class="axis-grid"></div></div>
+<div class="result-section"><h3>面接・面談で確認したいこと</h3><p class="small">点数が低い軸を中心に、確認質問を表示しています。</p><ul id="followups"></ul></div>
+<div class="note">
+<strong>ご利用上の注意</strong><br>
+相場は出典により幅がある目安です。断定ではなく幅で見てください。<br>
+還元率の健全な目安は60%以上とされますが、社会保険料等の会社負担を含むかで数値は変わります。
+</div>
+<div class="actions">
+<button class="secondary" id="share">Xに結果を投稿</button>
+<button class="secondary" id="again">入力を修正する</button>
+</div>
+<p class="small">Xへの投稿文には還元率と判定結果のみを含めます。金額・企業名・入力内容は投稿文に含めません。</p>
+</section>
+</main>
+<footer>入力内容はこのブラウザ内で計算します。外部サーバーへの送信・保存は行いません。</footer>
+<script>
+"use strict";
+const questionData = [
+ {text:"自分の契約単価（月額）を会社から教えてもらえますか？",axis:"pay"},
+ {text:"案件がない待機期間も、給与は満額支給されますか？",axis:"pay"},
+ {text:"参画する案件を自分で選んだり、断ったりできますか？",axis:"skill"},
+ {text:"自社の営業担当や上司から、案件・キャリアについて必要なサポートがありますか？",axis:"skill"},
+ {text:"自分の案件の商流（何次請けか）を教えてもらえますか？",axis:"pay"},
+ {text:"現場の指揮命令系統は、契約内容と一致していますか？",axis:"load"},
+ {text:"残業や休日の連絡は、過度なものではありませんか？",axis:"load"},
+ {text:"評価や昇給の基準は明確に説明されていますか？",axis:"pay"}
+];
+const followupData = {
+ pay:[
+ "自分の契約単価と、給与・賞与への反映ルールを開示してもらえますか？",
+ "待機期間中の給与・賞与・評価は、どのように扱われますか？",
+ "商流と、各段階で発生する費用やマージンの考え方を教えてもらえますか？",
+ "昇給・賞与の評価基準と、直近の昇給事例を教えてもらえますか？"
+ ],
+ skill:[
+ "案件を選ぶ際、希望条件はどの程度考慮されますか？断った場合に不利益はありますか？",
+ "希望する技術や工程に挑戦するため、営業や上司はどのように支援してくれますか？",
+ "資格取得や研修、学習費用に対する支援制度はありますか？"
+ ],
+ load:[
+ "現場での指示系統と、契約上の業務範囲はどのように整理されていますか？",
+ "平均残業時間と、繁忙期の残業時間の目安を教えてもらえますか？",
+ "勤務時間外・休日の連絡や緊急対応は、どの程度発生しますか？"
+ ]
+};
+const $ = id => document.getElementById(id);
+const yen = n => Math.round(n).toLocaleString("ja-JP") + "円";
+const pct = n => (Math.round(n*10)/10).toFixed(1) + "%";
+function renderQuestions(){
+ $("questions").innerHTML = questionData.map((q,i)=>`
+ <div class="question"><div class="qtext">${i+1}. ${q.text}</div>
+ <div class="choices">
+ ${[["yes","はい"],["no","いいえ"],["unknown","分からない"]].map(([v,t])=>`
+ <label><input type="radio" name="q${i}" value="${v}"> ${t}</label>`).join("")}
+ </div></div>`).join("");
+}
+function formatRange(low,high,unit="円"){
+ if(high===Infinity) return `${yen(low)}以上`;
+ return `${yen(low)}〜${yen(high)}`;
+}
+function calcPay(){
+ const monthly=Number($("monthly").value);
+ const bonus=Number($("bonus").value||0);
+ const enteredRate=Number($("rate").value);
+ const exp=$("experience").value;
+ const annual=monthly*12+bonus;
+ const hasRate=$("rate").value.trim()!=="" && enteredRate>0;
+ let low,high,label;
+ if(hasRate){low=high=enteredRate;label="入力された契約単価";}
+ else{
+  if(exp==="") throw new Error("契約単価が不明な場合は、経験年数を選択してください。");
+  const ranges=[[400000,500000],[500000,700000],[700000,900000],[900000,Infinity]];
+  [low,high]=ranges[Number(exp)];
+  label="経験年数から推定した参考単価";
+ }
+ const revenueLow=low*12, revenueHigh=high===Infinity?Infinity:high*12;
+ const baseLow=annual/revenueHigh*100;
+ const baseHigh=annual/revenueLow*100;
+ const loadedLow=annual*1.15/revenueHigh*100;
+ const loadedHigh=annual*1.15/revenueLow*100;
+ const rangeText=(a,b)=>a===b?pct(a):`${pct(a)}〜${pct(b)}`;
+ const cappedText=(a,b)=>high===Infinity?`${pct(b)}以下`:rangeText(a,b);
+ let html=`<div class="result-grid">
+ <div class="metric"><div class="label">額面年収（賞与込み）</div><div class="value">${yen(annual)}</div><div class="sub">月給×12＋年間賞与</div></div>
+ <div class="metric"><div class="label">${label}</div><div class="value">${formatRange(low,high)}</div><div class="sub">月額の目安</div></div>
+ <div class="metric"><div class="label">給与還元率</div><div class="value">${cappedText(baseLow,baseHigh)}</div><div class="sub">額面年収 ÷ 年間契約金額</div></div>
+ <div class="metric"><div class="label">会社負担込み還元率</div><div class="value">${cappedText(loadedLow,loadedHigh)}</div><div class="sub">（額面年収×1.15）÷ 年間契約金額</div></div>
+ </div>`;
+ const targetBlock=(r)=>{
+  const targetLow=revenueLow*r/100, targetHigh=revenueHigh===Infinity?Infinity:revenueHigh*r/100;
+  const gapLow=targetLow-annual, gapHigh=targetHigh===Infinity?Infinity:targetHigh-annual;
+  const gapText=gapHigh===Infinity?`月90万円を基準に ${gapLow>=0?"+":""}${yen(gapLow)}`:gapLow===gapHigh?`${gapLow>=0?"+":""}${yen(gapLow)}`:`${gapLow>=0?"+":""}${yen(gapLow)}〜${gapHigh>=0?"+":""}${yen(gapHigh)}`;
+  const verb=gapHigh===Infinity?"5年以上の単価下限（月90万円）を基準にした差額":gapLow>0?"目標年収との差（目標が上）":gapHigh<0?"目標年収との差（現在の年収が上）":"目標年収との差";
+  return `<div class="metric"><div class="label">還元率${r}%の場合の年収との差</div><div class="value">${gapText}</div><div class="sub">${verb}。${yen(targetLow)}${targetHigh===Infinity?"以上":`〜${yen(targetHigh)}`}が目標年収の目安</div></div>`;
+ };
+ html+=`<div class="result-section"><h3>還元率60%・70%の場合</h3><div class="result-grid">${targetBlock(60)}${targetBlock(70)}</div></div>`;
+ html+=`<p class="small">※契約単価が不明な場合は、経験年数別の参考レンジを使った推定です。5年以上は月90万円を下限とするため、還元率は「○％以下」、年収差は下限単価（月90万円）を基準にした差額を表示します。</p>`;
+ $("moneyResults").innerHTML=html;
+ return {baseLow,baseHigh,loadedLow,loadedHigh,hasRate,low,high};
+}
+function scoreAxes(){
+ const scores={pay:{score:0,total:0},skill:{score:0,total:0},load:{score:0,total:0}};
+ const answers=[];
+ questionData.forEach((q,i)=>{
+  const selected=document.querySelector(`input[name="q${i}"]:checked`);
+  if(!selected) throw new Error("職場環境チェックの8問すべてに回答してください。");
+  const points=selected.value==="yes"?2:selected.value==="unknown"?1:0;
+  scores[q.axis].score+=points;scores[q.axis].total+=2;
+  answers.push({axis:q.axis,value:selected.value});
+ });
+ return {scores,answers};
+}
+function axisStatus(rate){return rate>=75?["良好","good"]:rate>=50?["やや注意","warn"]:["要注意","bad"];}
+function renderAxes(scores){
+ const names={pay:"給与・還元",skill:"スキル成長",load:"心身負荷"};
+ $("axisResults").innerHTML=Object.entries(scores).map(([key,v])=>{
+  const rate=v.score/v.total*100;const [status,cls]=axisStatus(rate);
+  return `<div class="axis"><strong>${names[key]}</strong><div class="score">${Math.round(rate)}%</div><span class="status ${cls}">${status}</span><div class="small">${v.score}/${v.total}点</div></div>`;
+ }).join("");
+ const weak=Object.entries(scores).map(([key,v])=>({key,rate:v.score/v.total*100})).sort((a,b)=>a.rate-b.rate);
+ const prompts=[];
+ weak.forEach(item=>{if(item.rate<75) followupData[item.key].forEach(q=>{if(prompts.length<5)prompts.push(q);});});
+ if(!prompts.length) prompts.push("現在の条件が今後も維持されるか、評価面談などで定期的に確認しておくと安心です。");
+ $("followups").innerHTML=prompts.slice(0,5).map(q=>`<li>${q}</li>`).join("");
+ return weak;
+}
+let shareText="SES職場環境チェック";
+$("calculate").addEventListener("click",()=>{
+ $("error").textContent="";
+ try{
+  if(!Number($("monthly").value)||Number($("monthly").value)<=0) throw new Error("月給（額面）を入力してください。");
+  const pay=calcPay();
+  const {scores}=scoreAxes();
+  const weak=renderAxes(scores);
+  const baseRate=pay.baseLow===pay.baseHigh?pay.baseLow:(pay.baseLow+pay.baseHigh)/2;
+  const overall=weak.every(x=>x.rate>=75)?"良好":weak.some(x=>x.rate<50)?"要注意":"やや注意";
+  const rateLabel=pay.high===Infinity?`${pct(pay.baseLow)}以下`:pay.baseLow===pay.baseHigh?pct(baseRate):`${pct(pay.baseLow)}〜${pct(pay.baseHigh)}`;
+  shareText=`SES還元率チェック：還元率 ${rateLabel}／職場環境判定：${overall}`;
+  $("results").classList.add("show");
+  $("results").scrollIntoView({behavior:"smooth",block:"start"});
+ }catch(e){$("error").textContent=e.message;}
+});
+$("share").addEventListener("click",()=>{
+ const url="https://twitter.com/intent/tweet?text="+encodeURIComponent(shareText);
+ window.open(url,"_blank","noopener,noreferrer");
+});
+$("again").addEventListener("click",()=>{$("results").classList.remove("show");$("monthly").focus();window.scrollTo({top:0,behavior:"smooth"});});
+renderQuestions();
+</script>
+</body>
+</html>
