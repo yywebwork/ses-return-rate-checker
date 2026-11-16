@@ -103,7 +103,7 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;padding:4px 16px 28p
 <button class="secondary" id="share">Xに結果を投稿</button>
 <button class="secondary" id="again">入力を修正する</button>
 </div>
-<p class="small">Xへの投稿文には還元率と判定結果のみを含めます。金額・企業名・入力内容は投稿文に含めません。</p>
+<p class="small">Xへの投稿文には還元率・判定結果・このツールのURL・ハッシュタグを含めます。金額・企業名・個別の回答内容は投稿文に含めません。</p>
 </section>
 </main>
 <footer>入力内容はこのブラウザ内で計算します。外部サーバーへの送信・保存は行いません。</footer>
@@ -228,8 +228,15 @@ $("calculate").addEventListener("click",()=>{
   const weak=renderAxes(scores);
   const baseRate=pay.baseLow===pay.baseHigh?pay.baseLow:(pay.baseLow+pay.baseHigh)/2;
   const overall=weak.every(x=>x.rate>=75)?"良好":weak.some(x=>x.rate<50)?"要注意":"やや注意";
-  const rateLabel=pay.high===Infinity?`${pct(pay.baseLow)}以下`:pay.baseLow===pay.baseHigh?pct(baseRate):`${pct(pay.baseLow)}〜${pct(pay.baseHigh)}`;
-  shareText=`SES還元率チェック：還元率 ${rateLabel}／職場環境判定：${overall}`;
+  // 5年以上は単価の上限がないため、月90万円を下限にした還元率の上限を表示する。
+  const rateLabel=pay.high===Infinity?`${pct(pay.baseHigh)}以下`:pay.baseLow===pay.baseHigh?pct(baseRate):`${pct(pay.baseLow)}〜${pct(pay.baseHigh)}`;
+  const appUrl="https://yywebwork.github.io/ses-return-rate-checker/";
+  shareText=`SES還元率チェック：還元率 ${rateLabel}／職場環境判定：${overall}
+
+自分の還元率や職場環境もチェックしてみませんか？
+${appUrl}
+
+#SES #SESエンジニア`;
   $("results").classList.add("show");
   $("results").scrollIntoView({behavior:"smooth",block:"start"});
  }catch(e){$("error").textContent=e.message;}
